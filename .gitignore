@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local configuration and secrets
+.env
+.env.*
+kaggle.json
+
+# Data and generated artifacts
+data/raw/**
+data/processed/**
+outputs/**
+runs/**
+videos/**
+*.pt
+*.pth
+*.onnx
+
+# Keep directory placeholders
+!data/raw/.gitkeep
+!data/raw/images/.gitkeep
+!data/raw/images/train/.gitkeep
+!data/raw/images/val/.gitkeep
+!data/raw/labels/.gitkeep
+!data/raw/labels/train/.gitkeep
+!data/raw/labels/val/.gitkeep
+!data/processed/.gitkeep
+!outputs/.gitkeep
+!outputs/eda/.gitkeep
+!outputs/detections/.gitkeep
+!outputs/teams/.gitkeep
+!runs/.gitkeep
+!runs/scratch/.gitkeep
+!runs/transfer/.gitkeep
+!videos/.gitkeep
