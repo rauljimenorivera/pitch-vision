@@ -4,15 +4,11 @@ from __future__ import annotations
 
 import argparse
 import shutil
-import sys
 from pathlib import Path
 
 import yaml
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SRC_ROOT = PROJECT_ROOT / "src"
-if str(SRC_ROOT) not in sys.path:
-    sys.path.insert(0, str(SRC_ROOT))
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 DEFAULT_DATASET = "iasadpanwhar/football-player-detection-yolov8"
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
@@ -40,9 +36,13 @@ def find_split_dir(dataset_root: Path, split: str, kind: str) -> Path | None:
     for candidate in candidates:
         if not candidate.exists() or not candidate.is_dir():
             continue
-        if kind == "images" and any(path.suffix.lower() in IMAGE_EXTENSIONS for path in candidate.iterdir()):
+        if kind == "images" and any(
+            path.suffix.lower() in IMAGE_EXTENSIONS for path in candidate.iterdir()
+        ):
             return candidate
-        if kind == "labels" and any(path.suffix.lower() == ".txt" for path in candidate.iterdir()):
+        if kind == "labels" and any(
+            path.suffix.lower() == ".txt" for path in candidate.iterdir()
+        ):
             return candidate
     return None
 
@@ -168,6 +168,14 @@ def print_dataset_yaml(dataset_root: Path) -> None:
     print(f"Dataset names: {names}")
 
 
+def ensure_data_dirs(raw_root: Path) -> None:
+    """Create the full expected data/raw directory tree if not already present."""
+
+    for split in ("train", "val"):
+        (raw_root / "images" / split).mkdir(parents=True, exist_ok=True)
+        (raw_root / "labels" / split).mkdir(parents=True, exist_ok=True)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Download and validate a KaggleHub YOLO dataset.")
     parser.add_argument(
@@ -178,7 +186,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--raw-root",
         type=Path,
-        default=Path("data/raw"),
+        default=PROJECT_ROOT / "data" / "raw",
         help="Directory that contains images/{train,val} and labels/{train,val}.",
     )
     parser.add_argument(
@@ -193,7 +201,7 @@ def main() -> None:
     from pitch_vision.dataset import validate_layout
 
     args = parse_args()
-    args.raw_root.mkdir(parents=True, exist_ok=True)
+    ensure_data_dirs(args.raw_root)
 
     if not args.skip_download:
         import kagglehub

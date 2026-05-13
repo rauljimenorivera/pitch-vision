@@ -4,6 +4,10 @@ version = "0.1.0"
 description = "Computer Vision pipeline for football player and ball detection in match footage."
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
+
+[project.scripts]
+download-dataset = "pitch_vision.download_dataset:main"
+
 dependencies = [
     "ipykernel>=6.29.0",
     "jupyterlab>=4.2.0",
@@ -50,7 +54,7 @@ packages = ["src/pitch_vision"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-src = ["src", "scripts"]
+src = ["src"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
