@@ -19,8 +19,9 @@ env/
 .env.*
 kaggle.json
 
-# Data and generated artifacts
-data/raw/**
+# Data and generated artifacts (large binary/image files)
+data/images/**
+data/labels/**
 outputs/**
 runs/**
 *.pt
@@ -28,6 +29,6 @@ runs/**
 *.onnx
 
 # Keep directory placeholders
-!data/raw/.gitkeep
+!data/.gitkeep
 !outputs/eda/.gitkeep
 !runs/.gitkeep

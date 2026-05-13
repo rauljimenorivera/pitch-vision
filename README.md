@@ -38,28 +38,26 @@ The approach moves from data understanding to a simple non-deep baseline, then t
 
 ```text
 pitch-vision/
-├── data/
-│   └── raw/                        # ignored by git, populated by download-dataset
-│       ├── images/train/
-│       ├── images/val/
-│       ├── labels/train/
-│       └── labels/val/
+├── data/                           # ignored by git, populated by download script
+│   ├── images/train/
+│   ├── images/val/
+│   ├── labels/train/
+│   └── labels/val/
 ├── notebooks/
 │   ├── 01_eda.ipynb
 │   ├── 02_classical_ml.ipynb
 │   ├── 03_yolo_scratch.ipynb
 │   └── 04_yolo_transfer.ipynb
-├── src/pitch_vision/
+├── pitch_vision/                   # reusable Python package
 │   ├── dataset.py
 │   ├── eda_utils.py
 │   ├── classical_ml.py
-│   └── download_dataset.py         # dataset download script (uv run download-dataset)
+│   └── download_dataset.py
 ├── outputs/
-│   └── eda/                        # plots saved by notebook 01 and 02
-├── runs/
-│   └── detect/runs/                # YOLO training outputs (ignored by git)
-│       ├── scratch/yolov8n_scratch_v1-3/
-│       └── transfer/yolov8n_transfer_v1/
+│   └── eda/                        # plots saved by notebooks 01 and 02
+├── runs/                           # YOLO training outputs (ignored by git)
+│   ├── scratch/yolov8n_scratch_v1-3/
+│   └── transfer/yolov8n_transfer_v1/
 ├── data.yaml
 ├── pyproject.toml
 └── README.md
@@ -70,7 +68,7 @@ pitch-vision/
 Use the Kaggle dataset **Football Player Detection YOLOv8** through KaggleHub:
 
 ```powershell
-uv run download-dataset
+uv run python pitch_vision/download_dataset.py
 ```
 
 The default KaggleHub slug is `iasadpanwhar/football-player-detection-yolov8`.
@@ -78,7 +76,7 @@ The default KaggleHub slug is `iasadpanwhar/football-player-detection-yolov8`.
 The expected YOLO layout is:
 
 ```text
-data/raw/
+data/
 ├── images/
 │   ├── train/
 │   └── val/
@@ -133,7 +131,7 @@ Notebook: `notebooks/04_yolo_transfer.ipynb`
 
 The transfer model starts from `yolov8n.pt`. This notebook also hosts the **scratch vs transfer comparison**, conclusions, and overfitting discussion required by the course.
 
-For both YOLO stages, required run artifacts include `results.png`, `confusion_matrix.png`, `PR_curve.png`, and `F1_curve.png` (under each experiment folder in `runs/`, not committed to git).
+For both YOLO stages, run artifacts include `results.png`, `confusion_matrix.png`, `confusion_matrix_normalized.png`, `BoxPR_curve.png`, and `BoxF1_curve.png` (under each experiment folder in `runs/`, not committed to git).
 
 ## Setup
 
@@ -154,7 +152,7 @@ For GTX 1650 training, start with:
 ## Working Conventions
 
 - Keep raw data, generated outputs, YOLO runs, and model weights out of git.
-- Keep reusable logic in `src/pitch_vision/`.
+- Keep reusable logic in `pitch_vision/`.
 - Keep notebooks focused on narrative, configuration, execution, and conclusions.
 - Save every figure before showing it.
 - Clear notebook outputs before committing.
@@ -167,6 +165,18 @@ Possible extensions outside the current four-notebook scope:
 - Separate players by team using shirt color: extract upper-body crops from YOLO player detections, apply HSV filtering, and cluster dominant colors with K-Means to assign each player to one of two teams.
 - Detect pitch lines with HSV masks, edge detection, and Hough transforms.
 - Create tactical heatmaps from accumulated player positions across frames.
+
+## Personal Interest and Next Steps
+
+Working on this project has reinforced my interest in **computer vision applied to person and object detection**. The ability to extract structured information — positions, identities, trajectories — from raw image sequences strikes me as one of the most impactful areas of applied ML, with clear real-world uses beyond sport: retail analytics, autonomous systems, medical imaging, and public safety.
+
+After finishing the master's, I would like to explore:
+
+- **Re-identification across camera views**: tracking the same player across multiple broadcast angles without a persistent ID, using appearance embeddings.
+- **Multi-object tracking (MOT)**: extending frame-by-frame detection to full trajectories with algorithms like ByteTrack or StrongSORT, enabling speed and distance analytics per player.
+- **Action recognition on top of detections**: classifying what a detected person is doing (running, shooting, tackling) by combining bounding box sequences with a temporal model.
+- **Domain adaptation**: fine-tuning a football-trained detector on other sports or surveillance footage with minimal labelling effort, studying how much pretrained knowledge transfers.
+- **Edge deployment**: compressing YOLOv8n further with quantisation and pruning to run real-time detection on embedded hardware (e.g. a pitch-side Raspberry Pi or Jetson Nano).
 
 ## References
 

@@ -4,11 +4,19 @@ from __future__ import annotations
 
 import argparse
 import shutil
+import sys
 from pathlib import Path
 
 import yaml
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+# Ensure the project root is on sys.path when the script is run directly.
+# (The editable install .pth file can be corrupted by Windows ANSI encoding on
+# paths that contain non-ASCII characters, so we add the path explicitly.)
+_ROOT = str(PROJECT_ROOT)
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
 
 DEFAULT_DATASET = "iasadpanwhar/football-player-detection-yolov8"
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
@@ -186,7 +194,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--raw-root",
         type=Path,
-        default=PROJECT_ROOT / "data" / "raw",
+        default=PROJECT_ROOT / "data",
         help="Directory that contains images/{train,val} and labels/{train,val}.",
     )
     parser.add_argument(
